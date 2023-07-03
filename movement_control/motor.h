@@ -7,8 +7,7 @@
 class Motor {
 public:
   void init(void);
-  void control(boolean direction_A, uint8_t speed_A,
-               boolean direction_B, uint8_t speed_B);
+  void control(int16_t speed_A, int16_t speed_B);
   void stop(void);
 private:
 #define PIN_Motor_PWMA 5
