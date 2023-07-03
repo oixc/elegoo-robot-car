@@ -13,6 +13,11 @@ float yaw;
 float yaw_rate;
 float elapsedTime, currentTime, previousTime;
 
+#include "motor.h"
+Motor AppMotor;
+
+int speed = 100;
+
 void imu_init(MPU6050 accelgyro) {
     // join I2C bus (I2Cdev library doesn't do this automatically)
     #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
@@ -64,9 +69,10 @@ void imu_init(MPU6050 accelgyro) {
 }
 
 void setup() {
-    Serial.begin(9600);
-    imu_init(accelgyro);
-    delay(1000);
+  Serial.begin(9600);
+  AppMotor.init();
+  imu_init(accelgyro);
+  delay(1000);
 }
 
 void loop() {
@@ -80,5 +86,11 @@ void loop() {
     Serial.print(yaw); 
     Serial.print("\t");
     Serial.println(yaw_rate);
+
+    AppMotor.control(direction_forward, speed / 2, direction_forward, speed);
+  
+  delay(2000);
+  AppMotor.stop();
+
 }
 
