@@ -21,6 +21,9 @@ float delta_speed = 0.0;
 float target_angular_velocity = 0.0;
 float error_angular_velocity;
 
+bool spin_to_yaw = false;
+float target_yaw = 0.0;
+
 String msg;
 bool go = false;
 
@@ -108,6 +111,7 @@ void loop() {
 
   yaw_rate = accelgyro.getRotationZ() / 131.0;
   yaw = yaw + yaw_rate * elapsedTime;
+  yaw = (int)yaw % 360;
 
   /*
   Serial.print(yaw);
@@ -126,15 +130,32 @@ void loop() {
     speed_right = constrain(speed_right, -200, 200);
     speed_left = constrain(speed_left, -200, 200);
 
-    Serial.print(speed);
-    Serial.print(",");
-    Serial.print(target_angular_velocity);
-    Serial.print(",");
-    Serial.println(yaw_rate);
+    //Serial.print(target_angular_velocity);
+    //Serial.print(",");
+    //Serial.print(yaw_rate);
     //Serial.print(",");
     //Serial.print(error_angular_velocity);
     //Serial.print(",");
     //Serial.println(delta_speed);
+
+    int yaw_delta = 0;
+    if (spin_to_yaw) {
+      yaw_delta = abs(target_yaw - yaw);
+      yaw_delta = yaw_delta % 360;
+      if (yaw_delta < 10) {
+        spin_to_yaw = false;
+        delta_speed = 0;
+      } else {
+        speed_right = 220;
+        speed_left = -220;
+      }
+    }
+
+    Serial.print(yaw);
+    Serial.print(",");
+    Serial.print(target_yaw);
+    Serial.print(",");
+    Serial.println(yaw_delta);
 
     AppMotor.control(speed_right, speed_left);
   }
@@ -153,6 +174,11 @@ void loop() {
       case 'r': target_angular_velocity = -90.0; break;
       case 'u': speed += 20.0; break;
       case 'd': speed -= 20.0; break;
+      case 't':
+        target_yaw = yaw + 180;
+        target_yaw = (int)target_yaw % 360;
+        spin_to_yaw = true;
+        break;
     }
   }
 }
