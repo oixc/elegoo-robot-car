@@ -17,7 +17,7 @@ private:
 #define PIN_Motor_STBY 3
 
 public:
-#define speed_max 255
+#define speed_max 240
 #define direction_forward HIGH
 #define direction_backward LOW
 #define direction_void 3
